@@ -1,0 +1,21 @@
+Install few things  (using python 3.8)
+-uvicorn (pip install fastapi uvicorn) 
+-fastapi (pip install fastapi)
+-preprocess_kgptalkie (pip install preprocess_kgptalkie)
+
+
+Enter following command in terminal
+uvicorn app:app --reload
+
+Now,
+To run enter = http://127.0.0.1:8000/  in web browser.(It will access the first API i.e. to check)
+
+
+(It will access second API, prediction one)
+-To predict enter = http://127.0.0.1:8000/predict?input=This is a very good product 
+=>It will return prediction in json format
+
+                                                     OR
+
+Use http://127.0.0.1:8000/docs/
+=>To use FastAPi GUI
