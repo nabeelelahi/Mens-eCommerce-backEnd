@@ -125,24 +125,34 @@ function execute() {
 
 // Auth Api's
 app.get(`${baseURL}/login/:email/:assword`, (req, res) => {
-  const { Email, Password } = req.params;
-  const creds = { Email, Password };
+  const { email, password } = req.params;
+  const creds = { email, password };
 
+  // mongoose.createConnection(
+  //   connectionString,
+  //   connectionConfig,
+  //   function (err, db) {
+  //     if (err) throw err;
+  //   }
+  // );
 
   // 1. check first if user exists
-  client.db("e-commerce").collection("user").findOne({email: creds.Email}, function (err, result) {
+  client.db("e-commerce").collection("user").findOne(creds, function (err, result) {
     if (err) {
+      // db.close();
       res.json({
         success: false,
         message: err,
       });
     }
     if (!result) {
+      // db.close();
       res.json({
         success: false,
         message: "no such user",
       });
     } else {
+      // db.close();
       res.json({
         success: true,
         info: result,
@@ -392,42 +402,40 @@ app.get(`${baseURL}/user/get/products/:categoryId`, (req, res) => {
   return res;
 });
 
-app.post(`${baseURL}/user/search/by-image`,  upload.single("suggestionImage"), (req, res) => {
+app.post(`${baseURL}/user/imagesearch`, (req, res) => {
+   
+  const searchResults = req.body
+  const allResults = []
+  // console.log(searchResults.length);
 
-  const { originalname, mimetype } = req.file;
-  const image =
-    "/ecommerce.com/backend/api/v1/uploads/" +
-    originalname +
-    "." +
-    mimetype.split("/")[1];
-    
-  client.db("e-commerce").collection("product")
-    .find({})
-    .toArray((err, result) => {
-      if (!err) {
-        res.json({
-          success: true,
-          category: result,
-        });
+  // check first if product 1 exist exist
+  for(var i=0; i<searchResults.length; i++)
+  client.db("e-commerce").collection("product").findOne({image: searchResults[i]}, function (err, result) {
+    if (err) {
+      res.json({
+        success: false,
+        message: err,
+      });
+    }
+    if (!result) {
+      res.json({
+        success: false,
+        message: "no such product",
+      });
+    } else {
+      allResults.push(result);
+      if(allResults.length == searchResults.length){
+         res.json({
+           success: true,
+           results: allResults,
+         })
       }
-
-      if (err) {
-        res.json({
-          success: false,
-          message: err,
-        });
-      }
-
-      if (!result) {
-        res.json({
-          success: true,
-          category: [],
-        });
-      }
-    });
+    }
+  });
 
   return res;
 });
+
 
 
 // Admin End API's
