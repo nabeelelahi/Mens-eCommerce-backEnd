@@ -124,20 +124,10 @@ function execute() {
 
 
 // Auth Api's
-app.get(`${baseURL}/login/:email/:assword`, (req, res) => {
+app.get(`${baseURL}/login/:email/:password`, (req, res) => {
   const { email, password } = req.params;
-  const creds = { email, password };
 
-  // mongoose.createConnection(
-  //   connectionString,
-  //   connectionConfig,
-  //   function (err, db) {
-  //     if (err) throw err;
-  //   }
-  // );
-
-  // 1. check first if user exists
-  client.db("e-commerce").collection("user").findOne(creds, function (err, result) {
+  client.db("e-commerce").collection("user").findOne({Email: email}, function (err, result) {
     if (err) {
       // db.close();
       res.json({
@@ -369,12 +359,13 @@ app.get(`${baseURL}/user/get/category`, (req, res) => {
 });
 
 app.get(`${baseURL}/user/get/products/:categoryId`, (req, res) => {
-  const { customerId } = req.params;
+  const { categoryId } = req.params;
 
-  client.db("e-commerce").collection("Orders")
+  client.db("e-commerce").collection("product")
     .find({
-      customerId: String(customerId),
-      status: "active",
+      
+      Categorie: String(categoryId),
+      // status: "active",
     })
     .toArray((err, result) => {
       if (!err) {
